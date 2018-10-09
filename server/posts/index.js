@@ -4,6 +4,7 @@ const comments = require('./comments');
 
 router.get('/', (req, res) => {
 	const { userId, query } = req.query;
+	const { page = 1 } = req.query;
 
 	const filter = {};
 
@@ -16,8 +17,17 @@ router.get('/', (req, res) => {
 		];
 	}
 
-	Post.find(filter)
-		.populate('author')
+
+	Post.paginate({}, 
+		{ page, 
+		limit: 10,
+		populate: ['author']
+
+	}
+	)
+
+	// Post.find(filter)
+	// 	.populate('author')
 		.then(posts => res.send(posts))
 		.catch(e => res.status(400).send(e.message));
 });
